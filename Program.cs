@@ -31,46 +31,6 @@ namespace AlgorithmsLibrary
             qu.Union(4, 9);
             qu.Union(8, 0);
 
-
-            char[] arr = new char[] {'F', 'L', 'Q' ,'D' ,'U' ,'P' ,'E' ,'Y' ,'N' ,'R' };
-            
-            for(int i = 0;i < 4; i++)
-            {
-                int smallest = i;
-                for (int k = i + 1; k < arr.Length; k++)
-                    if (arr[smallest] > arr[k])
-                        smallest = k;
-
-                char temp = arr[smallest];
-                arr[smallest] = arr[i];
-                arr[i] = temp;
-            }
-
-            for (int i = 0; i < arr.Length; i++)
-                Console.Write(arr[i] + " ");
-
-            Console.WriteLine();
-              
-            arr = new char[] {  'F' ,'G' ,'J' ,'V' ,'Y' ,'I' ,'W' ,'A' ,'P' ,'E'  };
-            int ex = 0;
-            for (int i = 0; i < arr.Length; i++)
-                for (int k = i; k > 0; k--)
-                    if (k - 1 >= 0 && arr[k] < arr[k - 1])
-                    {
-                        char temp = arr[k];
-                        arr[k] = arr[k - 1];
-                        arr[k - 1] = temp;
-                        ex++;
-                        if (ex == 6)
-                            goto end;
-                    }
-                    else break;
-                
-            end:
-            for (int i = 0; i < arr.Length; i++)
-                Console.Write(arr[i] + " ");
-
-
         }
     }
 }
