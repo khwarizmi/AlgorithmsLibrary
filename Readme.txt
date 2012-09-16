@@ -1,5 +1,4 @@
-Welcome to My Library : i'm intending to implement alot of algorithms 
-like Graph algorithms, Numerical Methods,Datastructures, 
+Welcome to My Library : i'm implementing alot of algorithms in Graph Theory, Numerical Methods,Datastructures, Linear System Solvers. 
 
 Graph Algorithms:
 
@@ -9,5 +8,9 @@ DataStructures:
 	
 Numerical Methods:
 	
-System Solvers:
+Linear System Solvers:
+	*Gauss-Jordan Elimination Method.
 	*LUP System Solver.
+
+Computational Geometry:
+	*Convex Hull Algorithms(brute force, Graham Scan, Jarvis March). [using Java]
