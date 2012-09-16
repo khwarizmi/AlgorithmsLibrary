@@ -1,13 +1,10 @@
 Welcome to My Library : i'm implementing alot of algorithms in Graph Theory, Numerical Methods,Datastructures, Linear System Solvers. 
 
-Graph Algorithms:
-
 DataStructures:
 	*Dynammic Connected Components(Quick Find, Quick Union).
 	*Priority Queue.
-	
-Numerical Methods:
-	
+	*Red-Black-Tree (Rotate Left, Rotate Right, Insert, Insert Fix). 
+
 Linear System Solvers:
 	*Gauss-Jordan Elimination Method.
 	*LUP System Solver.
