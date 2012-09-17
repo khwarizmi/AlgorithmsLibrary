@@ -88,6 +88,53 @@ namespace AlgorithmsLibrary.Trees
             cmp = nodeComparer;
         }
 
+        private TreeNode<TValue> treeSuccessor(TreeNode<TValue> node)
+        {
+            if(node == null)
+                throw new Exception("no successor for null node");
+
+            while (node != null)
+            {
+                if (node.LeftNode == null && node.RightNode == null)
+                {
+                    return node;
+                }
+                else if (node.LeftNode == null && node.RightNode != null)
+                {
+                    node = node.RightNode;
+                }
+                else if (node.LeftNode != null)
+                {
+                    node = node.LeftNode;
+                }
+            }
+
+            return null;
+        }
+
+        private TreeNode<TValue> getNode(TValue item)
+        {
+            TreeNode<TValue> x = root;
+
+            while (x != null)
+            {
+                int comparison = cmp(x.Value, item);
+                if (comparison == 0)
+                    return x;
+                else if (comparison < 0)
+                    x = x.LeftNode;
+                else
+                    x = x.RightNode;
+            }
+
+            return null;
+        }
+
+        public bool contains(TValue item)
+        {
+            return getNode(item) != null;
+        }
+
         public void insert(TValue item)
         {
             if (root == null)
@@ -127,7 +174,6 @@ namespace AlgorithmsLibrary.Trees
 
             Fix_Insert(x);
         }
-
         private void Fix_Insert(TreeNode<TValue> z)
         {
             while (z.NodeColor == Color.Red && z.Parent != null && z.Parent.Parent != null)
@@ -248,6 +294,20 @@ namespace AlgorithmsLibrary.Trees
 
             //Always Set Color of Root node to Black
             root.NodeColor = Color.Black;
+        }
+
+        public void delete(TValue item)
+        {
+            TreeNode<TValue> node = getNode(item);
+
+            if (node == null)
+                throw new Exception("Unfound Element to Delete");
+
+
+        }
+        private void Fix_Delete(TreeNode<TValue> z)
+        {
+
         }
 
         private TreeNode<TValue> RotateLeft(TreeNode<TValue> x)
