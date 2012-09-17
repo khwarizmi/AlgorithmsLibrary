@@ -71,6 +71,7 @@ namespace AlgorithmsLibrary.Trees
             public TValue Value
             {
                 get { return _value; }
+                set { _value = value; }
             }
 
             #endregion
@@ -79,6 +80,7 @@ namespace AlgorithmsLibrary.Trees
         #endregion
 
         #region DataMembers
+        int _itemsCount;
         TreeNode<TValue> root;
         Comparison<TValue> cmp;
         #endregion
@@ -138,7 +140,7 @@ namespace AlgorithmsLibrary.Trees
 
             while (x != null)
             {
-                int comparison = cmp(x.Value, item);
+                int comparison = cmp(item, x.Value);
                 if (comparison == 0)
                     return x;
                 else if (comparison < 0)
@@ -150,6 +152,10 @@ namespace AlgorithmsLibrary.Trees
             return null;
         }
 
+        public int count()
+        {
+            return _itemsCount;
+        }
         public bool contains(TValue item)
         {
             return getNode(item) != null;
@@ -193,6 +199,8 @@ namespace AlgorithmsLibrary.Trees
             }
 
             Fix_Insert(x);
+            //Add Items Count
+            _itemsCount++;
         }
         private void Fix_Insert(TreeNode<TValue> z)
         {
@@ -323,8 +331,55 @@ namespace AlgorithmsLibrary.Trees
             if (node == null)
                 throw new Exception("Unfound Element to Delete");
 
+            bool blackNode = (node.NodeColor == Color.Black);
+            TreeNode<TValue> successor = treeSuccessor(node);
+            if (successor == node)
+            {
+                if (node.Parent == null)
+                {
+                    root = null;
+                }
+                else if (node.Parent.LeftNode == node)
+                {
+                    node.Parent.LeftNode = null;
+                }
+                else if (node.Parent.RightNode == node)
+                {
+                    node.Parent.RightNode = null;
+                }
+            }
+            else
+            {
+                TreeNode<TValue> successorParent = successor.Parent;
+                TreeNode<TValue> successorChild = null;
 
+                if (successor.LeftNode == null)
+                    successorChild = successor.RightNode;
+                else
+                    successorChild = successor.LeftNode;
+
+                if (successorParent.LeftNode == successor)
+                {
+                    successorChild.Parent = successorParent.LeftNode;
+                    successorParent.LeftNode = successorChild;
+                }
+                else
+                {
+                    successorChild.Parent = successorParent.RightNode;
+                    successorParent.RightNode = successorChild;
+                }
+                //Copy successor Value
+                node.Value = successor.Value;
+            }
+
+            if (blackNode)
+            {
+
+            }
+            //Decrement items Count
+            _itemsCount--;
         }
+
         private void Fix_Delete(TreeNode<TValue> z)
         {
 
@@ -418,6 +473,27 @@ namespace AlgorithmsLibrary.Trees
         }
 
         #region TestFunctions
+        public static void Test_Delete()
+        {
+            RedBlackTree<int> rbt = new RedBlackTree<int>((int x, int y) => { return x - y; });
+            int[] arr = new int[] { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 };// 4, 5, 6, 7, 8, 9, 10 };
+            //Array.Reverse(arr);
+
+            for (int i = 0; i < arr.Length; i++)
+                rbt.insert(arr[i]);
+
+            rbt.printTree();
+
+            rbt.delete(5);
+            rbt.printTree();
+            rbt.delete(1);
+            rbt.printTree();
+            rbt.delete(8);
+            rbt.printTree();
+            rbt.delete(3);
+            rbt.printTree();
+
+        }
         public static void Test_Insert()
         {
             RedBlackTree<int> rbt = new RedBlackTree<int>((int x,int y) => { return x - y; });
