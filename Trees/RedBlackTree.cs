@@ -93,6 +93,21 @@ namespace AlgorithmsLibrary.Trees
             if(node == null)
                 throw new Exception("no successor for null node");
 
+            //Case 1: Node with No-childrens
+            if (node.LeftNode == node.RightNode && node.LeftNode == null)
+                return node;
+
+            //Case 2: Node with Left-Child only and no Right-Child 
+            if (node.LeftNode != null && node.RightNode == null)
+                return node.LeftNode;
+
+            //Case 3: Node with No Left-Child and Only with Right Child
+            if (node.LeftNode == null && node.RightNode != null)
+                return node.RightNode;
+
+            //Case 4: choose minimum node from Right Node
+            node = node.RightNode;
+
             while (node != null)
             {
                 if (node.LeftNode == null && node.RightNode == null)
@@ -101,14 +116,19 @@ namespace AlgorithmsLibrary.Trees
                 }
                 else if (node.LeftNode == null && node.RightNode != null)
                 {
-                    node = node.RightNode;
+                    return node;
                 }
-                else if (node.LeftNode != null)
+                else if (node.LeftNode != null && node.RightNode == null)
+                {
+                    node =  node.LeftNode;
+                }
+                else
                 {
                     node = node.LeftNode;
                 }
             }
 
+            throw new Exception("couldn't get node successor");
             return null;
         }
 
