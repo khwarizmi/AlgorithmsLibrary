@@ -331,7 +331,6 @@ namespace AlgorithmsLibrary.Trees
             if (node == null)
                 throw new Exception("Unfound Element to Delete");
 
-            bool blackNode = (node.NodeColor == Color.Black);
             TreeNode<TValue> successor = treeSuccessor(node);
             if (successor == node)
             {
@@ -350,6 +349,7 @@ namespace AlgorithmsLibrary.Trees
             }
             else
             {
+                bool blackNode = (successor.NodeColor == Color.Black);
                 TreeNode<TValue> successorParent = successor.Parent;
                 TreeNode<TValue> successorChild = null;
 
@@ -370,19 +370,141 @@ namespace AlgorithmsLibrary.Trees
                 }
                 //Copy successor Value
                 node.Value = successor.Value;
+                if (blackNode)
+                    Fix_Delete(successorChild);
+                
             }
 
-            if (blackNode)
-            {
-
-            }
             //Decrement items Count
             _itemsCount--;
         }
-
-        private void Fix_Delete(TreeNode<TValue> z)
+        private void Fix_Delete(TreeNode<TValue> x)
         {
+            while (x.Parent != null && x.NodeColor == Color.Black && x.Parent.LeftNode != null && x.Parent.RightNode != null)
+            {
+                TreeNode<TValue> c = x.Parent;
+                #region LeftNode
+                //Case: z node is LeftNode
+                if (c.LeftNode == x)
+                {
+                    TreeNode<TValue> w = c.RightNode; 
+                    //case 1: parent node is black, w is red and both children's black
+                    if (w.NodeColor == Color.Red && (w.LeftNode == null || w.LeftNode.NodeColor == Color.Black) && (w.RightNode == null || w.RightNode.NodeColor == Color.Black))
+                    {
+                        bool leftChild = (c.Parent != null && c.Parent.LeftNode == c);
+                        TreeNode<TValue> parent = c.Parent;
+                        c.NodeColor = Color.Red;
+                        w.NodeColor = Color.Black;
+                        c = RotateLeft(c);
+                        if (parent == null)
+                            root = c;
+                        else if (leftChild)
+                            parent.LeftNode = c;
+                        else
+                            parent.RightNode = c;
 
+                        w = c.LeftNode.RightNode;
+                        x = c.LeftNode.LeftNode;
+                        c = c.LeftNode;
+                    }
+
+                    //case 2: c is red, w is black and two childs are black
+                    if ((w.LeftNode == null || w.LeftNode.NodeColor == Color.Black) && (w.RightNode == null || w.RightNode.NodeColor == Color.Black))
+                    {
+                        w.NodeColor = Color.Red;
+                        x = x.Parent;
+                    }
+                    else
+                    {
+                        //case 3: c is red, w is black and left child is red and right child is black
+                        if (w.RightNode == null || w.RightNode.NodeColor == Color.Black)
+                        {
+                            TreeNode<TValue> parent = w.Parent;
+                            w.LeftNode.NodeColor = Color.Black;
+                            w.NodeColor = Color.Red;
+                            w = RotateRight(w);
+                            parent.RightNode = w;
+                        }
+
+                        //case 4: c is red, w is black and right child is black
+                        bool leftChild = (c.Parent != null && c.Parent.LeftNode == c);
+                        TreeNode<TValue> parentParent = c.Parent;
+                        c = RotateLeft(c);
+                        if (parentParent == null)
+                            root = c;
+                        else if (leftChild)
+                            parentParent.LeftNode = c;
+                        else
+                            parentParent.RightNode = c;
+                        c.NodeColor = Color.Red;
+                        c.LeftNode.NodeColor = Color.Black;
+                        c.RightNode.NodeColor = Color.Black;
+                        x = root;                        
+                    }
+                }
+                #endregion
+                #region Right Node
+                else
+                {
+                    TreeNode<TValue> w = c.LeftNode;
+                    //case 1: parent node is black, w is red and both children's black
+                    if (w.NodeColor == Color.Red && (w.LeftNode == null || w.LeftNode.NodeColor == Color.Black) && (w.RightNode == null || w.RightNode.NodeColor == Color.Black))
+                    {
+                        bool leftChild = (c.Parent != null && c.Parent.LeftNode == c);
+                        TreeNode<TValue> parent = c.Parent;
+                        c.NodeColor = Color.Red;
+                        w.NodeColor = Color.Black;
+                        c = RotateRight(c);
+                        if (parent == null)
+                            root = c;
+                        else if (leftChild)
+                            parent.LeftNode = c;
+                        else
+                            parent.RightNode = c;
+
+                        x = c.RightNode.RightNode;
+                        w = c.RightNode.LeftNode;
+                        c = c.RightNode;
+                    }
+
+                    //case 2: c is red, w is black and two childs are black
+                    if ((w.LeftNode == null || w.LeftNode.NodeColor == Color.Black) && (w.RightNode == null || w.RightNode.NodeColor == Color.Black))
+                    {
+                        w.NodeColor = Color.Red;
+                        x = x.Parent;
+                    }
+                    else
+                    {
+                        //case 3: 
+                        if (w.LeftNode == null || w.LeftNode.NodeColor == Color.Black)
+                        {
+                            TreeNode<TValue> parent = w.Parent;
+                            w.RightNode.NodeColor = Color.Black;
+                            w.NodeColor = Color.Red;
+                            w = RotateLeft(w);
+                            parent.LeftNode = w;
+                        }
+
+                        //case 4: 
+                        bool leftChild = (c.Parent != null && c.Parent.LeftNode == c);
+                        TreeNode<TValue> parentParent = c.Parent;
+                        c = RotateLeft(c);
+                        if (parentParent == null)
+                            root = c;
+                        else if (leftChild)
+                            parentParent.LeftNode = c;
+                        else
+                            parentParent.RightNode = c;
+                        c.NodeColor = Color.Red;
+                        c.LeftNode.NodeColor = Color.Black;
+                        c.RightNode.NodeColor = Color.Black;
+                        x = root;
+                    }
+                }
+                #endregion
+            }
+
+            x.NodeColor = Color.Black;
         }
 
         private TreeNode<TValue> RotateLeft(TreeNode<TValue> x)
@@ -472,6 +594,28 @@ namespace AlgorithmsLibrary.Trees
             print(node.RightNode);
         }
 
+        private void TestTreeConditions()
+        {
+            //1- Root is Black
+            if (root != null && root.NodeColor != Color.Black)
+                throw new Exception("Rule Number One : Root Node tree isn't black");
+            
+            //2- Every Red node has two Black childs
+            TestRedProperty(root, 0);
+
+        }
+        private void TestRedProperty(TreeNode<TValue> x, int level)
+        {
+            if (x == null)
+                return;
+            
+            if(x.NodeColor == Color.Red && !((x.LeftNode == null || x.LeftNode.NodeColor == Color.Black) && (x.RightNode == null || x.RightNode.NodeColor == Color.Black)))
+                throw new Exception("Rule Number Two : Red Node = "+ x.Value +" at level Number = " + level + " with one or two red child nodes");
+            
+            TestRedProperty(x.LeftNode, level + 1);
+            TestRedProperty(x.RightNode, level + 1);
+        }
+
         #region TestFunctions
         public static void Test_Delete()
         {
@@ -485,13 +629,25 @@ namespace AlgorithmsLibrary.Trees
             rbt.printTree();
 
             rbt.delete(5);
+            rbt.TestTreeConditions();
             rbt.printTree();
+
             rbt.delete(1);
+            rbt.TestTreeConditions();
             rbt.printTree();
+
             rbt.delete(8);
+            rbt.TestTreeConditions();
             rbt.printTree();
+
             rbt.delete(3);
+            rbt.TestTreeConditions();
             rbt.printTree();
+
+            rbt.delete(4);
+            rbt.TestTreeConditions();
+            rbt.printTree();
+
 
         }
         public static void Test_Insert()

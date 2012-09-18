@@ -3,7 +3,7 @@ Welcome to My Library : i'm implementing alot of algorithms in Graph Theory, Num
 DataStructures:
 	*Dynammic Connected Components(Quick Find, Quick Union).
 	*Priority Queue.
-	*Red-Black-Tree (Rotate Left, Rotate Right, Insert, Insert Fix). 
+	*Red-Black-Tree (Rotate Left, Rotate Right, Insert, Insert Fix, Delete). 
 
 Linear System Solvers:
 	*Gauss-Jordan Elimination Method.
