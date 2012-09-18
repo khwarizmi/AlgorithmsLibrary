@@ -5,7 +5,7 @@ using System.Text;
 
 namespace AlgorithmsLibrary.Trees
 {
-    class RedBlackTree<TValue>
+    class RangeTree<TValue>
     {
         #region TreeNode
         enum Color {Red, Black};
@@ -85,53 +85,9 @@ namespace AlgorithmsLibrary.Trees
         Comparison<TValue> cmp;
         #endregion
 
-        public RedBlackTree(Comparison<TValue> nodeComparer)
+        public RangeTree(Comparison<TValue> nodeComparer)
         {
             cmp = nodeComparer;
-        }
-
-        private TreeNode<TValue> treeSuccessor(TreeNode<TValue> node)
-        {
-            if(node == null)
-                throw new Exception("no successor for null node");
-
-            //Case 1: Node with No-childrens
-            if (node.LeftNode == node.RightNode && node.LeftNode == null)
-                return node;
-
-            //Case 2: Node with Left-Child only and no Right-Child 
-            if (node.LeftNode != null && node.RightNode == null)
-                return node.LeftNode;
-
-            //Case 3: Node with No Left-Child and Only with Right Child
-            if (node.LeftNode == null && node.RightNode != null)
-                return node.RightNode;
-
-            //Case 4: choose minimum node from Right Node
-            node = node.RightNode;
-
-            while (node != null)
-            {
-                if (node.LeftNode == null && node.RightNode == null)
-                {
-                    return node;
-                }
-                else if (node.LeftNode == null && node.RightNode != null)
-                {
-                    return node;
-                }
-                else if (node.LeftNode != null && node.RightNode == null)
-                {
-                    node =  node.LeftNode;
-                }
-                else
-                {
-                    node = node.LeftNode;
-                }
-            }
-
-            throw new Exception("couldn't get node successor");
-            return null;
         }
 
         private TreeNode<TValue> getNode(TValue item)
@@ -150,6 +106,42 @@ namespace AlgorithmsLibrary.Trees
             }
 
             return null;
+        }
+        private TreeNode<TValue> getSpliterNode(TValue r1, TValue r2)
+        {
+            TreeNode<TValue> x = root;
+            while (x != null)
+            {
+                if (cmp.Invoke(r1, x.Value) <= 0 && cmp.Invoke(r2, x.Value) >= 0)
+                {
+                    return x;
+                }
+                else if (cmp.Invoke(r1, x.Value) > 0)
+                    x = x.RightNode;
+                else
+                    x = x.LeftNode;
+            }
+
+            return null;
+        }
+        private List<TValue> fetchSubTree(TreeNode<TValue> node)
+        {
+            if (node == null)
+                return null;
+
+            //Fetch Left and Right Childs
+            List<TValue> leftChilds = fetchSubTree(node.LeftNode);
+            TValue value = node.Value;
+            List<TValue> rightChilds = fetchSubTree(node.RightNode);
+
+            //Merge both Lists if not Null
+            if (leftChilds == null)
+                leftChilds = new List<TValue>();
+            leftChilds.Add(value);
+            if (rightChilds != null)
+                leftChilds.AddRange(rightChilds);
+
+            return leftChilds;
         }
 
         public int count()
@@ -172,7 +164,7 @@ namespace AlgorithmsLibrary.Trees
 
             TreeNode<TValue> x = root;
             TreeNode<TValue> xParent = root;
-
+            
             //Decide Node Parent
             while (x != null)
             {
@@ -310,187 +302,56 @@ namespace AlgorithmsLibrary.Trees
             root.NodeColor = Color.Black;
         }
 
-        public void delete(TValue item)
+        public List<TValue> range(TValue r1, TValue r2)
         {
-            TreeNode<TValue> node = getNode(item);
+            List<TValue> returnRange = new List<TValue> ();
+            TreeNode<TValue> splitNode = getSpliterNode(r1, r2);
 
-            if (node == null)
-                throw new Exception("Unfound Element to Delete");
+            if (splitNode == null)
+                return returnRange;
 
-            TreeNode<TValue> successor = treeSuccessor(node);
-            if (successor == node)
+            TreeNode<TValue> splitRight = splitNode.RightNode;
+            while (splitRight != null)
             {
-                if (node.Parent == null)
+                if (cmp.Invoke(r2, splitRight.Value) >= 0)
                 {
-                    root = null;
-                }
-                else if (node.Parent.LeftNode == node)
-                {
-                    node.Parent.LeftNode = null;
-                }
-                else if (node.Parent.RightNode == node)
-                {
-                    node.Parent.RightNode = null;
-                }
-            }
-            else
-            {
-                bool blackNode = (successor.NodeColor == Color.Black);
-                TreeNode<TValue> successorParent = successor.Parent;
-                TreeNode<TValue> successorChild = null;
-
-                if (successor.LeftNode == null)
-                    successorChild = successor.RightNode;
-                else
-                    successorChild = successor.LeftNode;
-
-                if (successorParent.LeftNode == successor)
-                {
-                    successorChild.Parent = successorParent.LeftNode;
-                    successorParent.LeftNode = successorChild;
+                    //Fetch all left-subtree Nodes
+                    List<TValue> temp = fetchSubTree(splitRight.LeftNode);
+                    if(temp != null)
+                        returnRange.AddRange(temp);
+                    returnRange.Add(splitRight.Value);
+                    //Recurse on Right node
+                    splitRight = splitRight.RightNode;
                 }
                 else
                 {
-                    successorChild.Parent = successorParent.RightNode;
-                    successorParent.RightNode = successorChild;
+                    splitRight = splitRight.LeftNode;
                 }
-                //Copy successor Value
-                node.Value = successor.Value;
-                if (blackNode)
-                    Fix_Delete(successorChild);
-                
             }
 
-            //Decrement items Count
-            _itemsCount--;
-        }
-        private void Fix_Delete(TreeNode<TValue> x)
-        {
-            while (x.Parent != null && x.NodeColor == Color.Black && x.Parent.LeftNode != null && x.Parent.RightNode != null)
+            returnRange.Add(splitNode.Value);
+
+            TreeNode<TValue> splitLeft = splitNode.LeftNode;
+            while (splitLeft != null)
             {
-                TreeNode<TValue> c = x.Parent;
-                #region LeftNode
-                //Case: z node is LeftNode
-                if (c.LeftNode == x)
+                if (cmp.Invoke(r1, splitLeft.Value) <= 0)
                 {
-                    TreeNode<TValue> w = c.RightNode; 
-                    //case 1: parent node is black, w is red and both children's black
-                    if (w.NodeColor == Color.Red && (w.LeftNode == null || w.LeftNode.NodeColor == Color.Black) && (w.RightNode == null || w.RightNode.NodeColor == Color.Black))
-                    {
-                        bool leftChild = (c.Parent != null && c.Parent.LeftNode == c);
-                        TreeNode<TValue> parent = c.Parent;
-                        c.NodeColor = Color.Red;
-                        w.NodeColor = Color.Black;
-                        c = RotateLeft(c);
-                        if (parent == null)
-                            root = c;
-                        else if (leftChild)
-                            parent.LeftNode = c;
-                        else
-                            parent.RightNode = c;
-
-                        w = c.LeftNode.RightNode;
-                        x = c.LeftNode.LeftNode;
-                        c = c.LeftNode;
-                    }
-
-                    //case 2: c is red, w is black and two childs are black
-                    if ((w.LeftNode == null || w.LeftNode.NodeColor == Color.Black) && (w.RightNode == null || w.RightNode.NodeColor == Color.Black))
-                    {
-                        w.NodeColor = Color.Red;
-                        x = x.Parent;
-                    }
-                    else
-                    {
-                        //case 3: c is red, w is black and left child is red and right child is black
-                        if (w.RightNode == null || w.RightNode.NodeColor == Color.Black)
-                        {
-                            TreeNode<TValue> parent = w.Parent;
-                            w.LeftNode.NodeColor = Color.Black;
-                            w.NodeColor = Color.Red;
-                            w = RotateRight(w);
-                            parent.RightNode = w;
-                        }
-
-                        //case 4: c is red, w is black and right child is black
-                        bool leftChild = (c.Parent != null && c.Parent.LeftNode == c);
-                        TreeNode<TValue> parentParent = c.Parent;
-                        c = RotateLeft(c);
-                        if (parentParent == null)
-                            root = c;
-                        else if (leftChild)
-                            parentParent.LeftNode = c;
-                        else
-                            parentParent.RightNode = c;
-                        c.NodeColor = Color.Red;
-                        c.LeftNode.NodeColor = Color.Black;
-                        c.RightNode.NodeColor = Color.Black;
-                        x = root;                        
-                    }
+                    //Fetch all left-subtree Nodes
+                    List<TValue> temp = fetchSubTree(splitLeft.RightNode);
+                    if(temp != null)
+                        returnRange.AddRange(temp);
+                    returnRange.Add(splitLeft.Value);
+                    //Recurse on Right node
+                    splitLeft = splitLeft.LeftNode;
                 }
-                #endregion
-                #region Right Node
                 else
                 {
-                    TreeNode<TValue> w = c.LeftNode;
-                    //case 1: parent node is black, w is red and both children's black
-                    if (w.NodeColor == Color.Red && (w.LeftNode == null || w.LeftNode.NodeColor == Color.Black) && (w.RightNode == null || w.RightNode.NodeColor == Color.Black))
-                    {
-                        bool leftChild = (c.Parent != null && c.Parent.LeftNode == c);
-                        TreeNode<TValue> parent = c.Parent;
-                        c.NodeColor = Color.Red;
-                        w.NodeColor = Color.Black;
-                        c = RotateRight(c);
-                        if (parent == null)
-                            root = c;
-                        else if (leftChild)
-                            parent.LeftNode = c;
-                        else
-                            parent.RightNode = c;
-
-                        x = c.RightNode.RightNode;
-                        w = c.RightNode.LeftNode;
-                        c = c.RightNode;
-                    }
-
-                    //case 2: c is red, w is black and two childs are black
-                    if ((w.LeftNode == null || w.LeftNode.NodeColor == Color.Black) && (w.RightNode == null || w.RightNode.NodeColor == Color.Black))
-                    {
-                        w.NodeColor = Color.Red;
-                        x = x.Parent;
-                    }
-                    else
-                    {
-                        //case 3: w left node is black
-                        if (w.LeftNode == null || w.LeftNode.NodeColor == Color.Black)
-                        {
-                            TreeNode<TValue> parent = w.Parent;
-                            w.RightNode.NodeColor = Color.Black;
-                            w.NodeColor = Color.Red;
-                            w = RotateLeft(w);
-                            parent.LeftNode = w;
-                        }
-
-                        //case 4: w is black and it's left node is red
-                        bool leftChild = (c.Parent != null && c.Parent.LeftNode == c);
-                        TreeNode<TValue> parentParent = c.Parent;
-                        c = RotateLeft(c);
-                        if (parentParent == null)
-                            root = c;
-                        else if (leftChild)
-                            parentParent.LeftNode = c;
-                        else
-                            parentParent.RightNode = c;
-                        c.NodeColor = Color.Red;
-                        c.LeftNode.NodeColor = Color.Black;
-                        c.RightNode.NodeColor = Color.Black;
-                        x = root;
-                    }
+                    splitLeft = splitLeft.RightNode;
                 }
-                #endregion
             }
 
-            x.NodeColor = Color.Black;
+            returnRange.Reverse();
+            return returnRange;
         }
 
         private TreeNode<TValue> RotateLeft(TreeNode<TValue> x)
@@ -602,42 +463,49 @@ namespace AlgorithmsLibrary.Trees
         }
 
         #region TestFunctions
-        public static void Test_Delete()
+        public static void Test_Range()
         {
-            RedBlackTree<int> rbt = new RedBlackTree<int>((int x, int y) => { return x - y; });
-            int[] arr = new int[] { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 };// 4, 5, 6, 7, 8, 9, 10 };
-            //Array.Reverse(arr);
+            Random random = new Random ();
+            int tries = random.Next(100);
+            for (int i = 0; i < tries; i++)
+            {
+                RangeTree<int> range = new RangeTree<int>((int x, int y) => { return x - y; });
+                int items = random.Next(300);
+                List<int> values = new List<int>();
+                for (int j = 0; j < items; j++)
+                {
+                    int t = random.Next(500000);
+                    range.insert(t);
+                    values.Add(t);
+                }
+                int r1 = random.Next(5000);
+                int r2 = r1 + random.Next(100000);
+                List<int> ret = range.range(r1, r2);
 
-            for (int i = 0; i < arr.Length; i++)
-                rbt.insert(arr[i]);
+                if(range.count() != items)
+                    throw new Exception("Expected Count of Tree is : " + items + " While recieved Tree Count is : " + range.count());
 
-            rbt.printTree();
+                int expectedCount = 0;
+                for (int j = 0; j < values.Count; j++)
+                    if (r1 <= values[j] && r2 >= values[j])
+                        expectedCount++;
 
-            rbt.delete(5);
-            rbt.TestTreeConditions();
-            rbt.printTree();
+                for (int p = 0; p < ret.Count; p++)
+                    if (ret[p] < r1 || ret[p] > r2)
+                        throw new Exception("Wrong Range Added");
 
-            rbt.delete(1);
-            rbt.TestTreeConditions();
-            rbt.printTree();
+                if (expectedCount != ret.Count)
+                {
+                    for (int k = 0; k < ret.Count; k++)
+                        Console.Write(" " + ret[i]);
 
-            rbt.delete(8);
-            rbt.TestTreeConditions();
-            rbt.printTree();
-
-            rbt.delete(3);
-            rbt.TestTreeConditions();
-            rbt.printTree();
-
-            rbt.delete(4);
-            rbt.TestTreeConditions();
-            rbt.printTree();
-
-
+                    throw new Exception("Expected Count is : " + expectedCount + " While recieved is : " + ret.Count);
+                }
+            }
         }
         public static void Test_Insert()
         {
-            RedBlackTree<int> rbt = new RedBlackTree<int>((int x,int y) => { return x - y; });
+            RangeTree<int> rbt = new RangeTree<int>((int x, int y) => { return x - y; });
             int[] arr = new int[] { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10};// 4, 5, 6, 7, 8, 9, 10 };
             //Array.Reverse(arr);
 
