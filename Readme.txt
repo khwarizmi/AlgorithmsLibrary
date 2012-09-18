@@ -4,6 +4,7 @@ DataStructures:
 	*Dynammic Connected Components(Quick Find, Quick Union).
 	*Priority Queue.
 	*Red-Black-Tree (Rotate Left, Rotate Right, Insert, Insert Fix, Delete, Delete Fix). 
+	*1D Range Trees.
 
 Linear System Solvers:
 	*Gauss-Jordan Elimination Method.
