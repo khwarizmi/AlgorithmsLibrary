@@ -1,6 +1,7 @@
 Welcome to My Library : i'm implementing alot of algorithms in Graph Theory, Numerical Methods,Datastructures, Linear System Solvers. 
 
 DataStructures:
+	*Bit Vector(set bit index value, get bit value). 
 	*Dynammic Connected Components(Quick Find, Quick Union).
 	*Priority Queue, Circular Queue.
 	*Red-Black-Tree (Rotate Left, Rotate Right, Insert, Delete). 
