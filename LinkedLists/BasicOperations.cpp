@@ -48,6 +48,29 @@ node* BuildList(int n)
 	return listHead;
 }
 
+node* BuildListReverse(int n)
+{
+	assert(n >= 1);
+	node *listHead = NULL, *listPointer = NULL;
+	for(int i = n; i >= 1; i--)
+	{
+		if(listHead == NULL)
+		{
+			listHead = new node;
+			listPointer = listHead;
+		}
+		else
+		{
+			listPointer->next = new node;
+			listPointer = listPointer->next;
+		}
+		listPointer->data = i;
+	}
+	listPointer->next = NULL;
+
+	return listHead;
+}
+
 void printList(node* listHead)
 {
 	while(listHead != NULL)
@@ -270,6 +293,211 @@ void MoveNode(node** sourceRef, node** destRef)
 	}
 }
 
+void AlternatingSplit(node* source, node** aRef, node** bRef) 
+{
+	if(source == NULL)
+		return;
+
+	bool takeFirst= true;
+	node* tempNode = NULL;
+	node** firstList = aRef, **secondList = bRef;
+
+	while(source != NULL)
+	{
+		tempNode = source->next;
+		if(takeFirst)
+		{
+			if(*firstList == NULL){ *firstList = source;}
+			else { (*firstList)->next = source; firstList = &((*firstList)->next);}
+		}
+		else
+		{
+			if(*secondList == NULL){ *secondList = source;}
+			else { (*secondList)->next = source; secondList = &((*secondList)->next);}
+		}
+		source = tempNode;
+		takeFirst = !takeFirst;
+	}
+
+	(*firstList)->next = NULL;
+	(*secondList)->next = NULL;
+}
+
+node* ShuffleMerge(node* a, node* b)
+{
+	node* head = (a != NULL? a : b);
+	node* nextPtr = head;
+	if(head == NULL)
+		return NULL;
+	if(a == NULL)
+		return b;
+	if(b == NULL)
+		return a;
+
+	bool takeFirst = false;
+	a = a->next;
+	while(a != NULL || b != NULL)
+	{
+		if(takeFirst && a != NULL)
+		{
+			nextPtr->next = a;
+			a = a->next;
+		}
+		else if(!takeFirst && b != NULL)
+		{
+			nextPtr->next = b;
+			b = b->next;
+		}
+
+		takeFirst = !takeFirst;
+		nextPtr = nextPtr->next;			
+	}
+
+	return head;
+}
+
+node* SortedMerge(node* a, node* b)
+{
+	if(a == NULL)
+		return b;
+	if(b == NULL)
+		return a;
+
+	node* head = NULL;
+	node* nextPtr = NULL;
+	if(a->data <= b->data)
+	{
+		head = a;
+		a= a->next;
+	}
+	else
+	{
+		head = b;
+		b = b->next;
+	}
+
+	nextPtr = head;
+	while(a != NULL || b != NULL)
+	{
+		if(b == NULL || (a!= NULL && a->data <= b->data))
+		{
+			nextPtr->next = a;
+			a = a->next;
+		}
+		else if(a == NULL || (b!=NULL && a->data > b->data))
+		{
+			nextPtr->next = b;
+			b = b->next;
+		}
+		nextPtr = nextPtr->next;
+	}
+
+	return head;
+}
+
+void Reverse(node** headRef)
+{
+	if(headRef == NULL || *headRef == NULL)
+		return;
+
+	node *newHead=NULL, *tempHead=NULL, *oldHead = *headRef;
+
+	while(oldHead != NULL)
+	{
+		tempHead = oldHead->next;
+		oldHead->next = newHead;
+		newHead = oldHead;
+		oldHead = tempHead;
+	}
+
+	*headRef = newHead;
+}
+
+void ReverseRecursive(node** headRef)
+{
+	if(headRef == NULL || *headRef == NULL)
+		return;
+
+	if((*headRef)->next == NULL)
+		return;
+
+	node* current = *headRef;
+	node* next = current->next;
+	
+	if(next == NULL) return;
+
+	ReverseRecursive(&next);
+
+	current->next->next = current;
+	current->next = NULL;
+	*headRef = next;
+}
+
+node* SortedIntersect(node* a, node* b)
+{
+	if(a == NULL || b == NULL)
+		return NULL;
+
+	node* iList = NULL;
+	node* ptrList = NULL;
+
+	while(a != NULL && b != NULL)
+	{
+		if(a->data == b->data)
+		{
+			if(iList == NULL)
+			{
+				iList = a;
+				ptrList = iList;
+				a =a->next;
+				b = b->next;
+			}
+			else
+			{
+				ptrList->next = a;
+				a = a->next;
+				b = b->next;
+				ptrList = ptrList->next; 
+			}
+		}
+		else
+			if(a->data > b->data)
+				b = b->next;
+			else
+				a = a->next;
+	}
+
+	ptrList->next = NULL;
+	return iList;
+}
+
+void MergeSort(node** headRef)
+{
+	if(headRef == NULL || *headRef == NULL)
+		return;
+
+	node *a, *b;
+	FrontBackSplit(*headRef, &a, &b);
+
+	if(b == NULL)
+	{
+		*headRef = a;
+		return;
+	}
+
+	MergeSort(&a);
+	MergeSort(&b);
+
+	*headRef = SortedMerge(a,b);
+}
+
+void swap(int *a, int*b)
+{
+	int temp = *a;
+	*a = *b;
+	*b = temp;
+}
+
 int main() {
 
 	printf("Test BuildList, PrintList: ");
@@ -345,6 +573,49 @@ int main() {
 	printList(testMoveNodeListFirst);
 	printList(testMoveNodeListSecond);
 	
+	printf("Testing Alternate Splitting Operation: \n");
+	node *newFirstList = NULL, *newSecondList = NULL;
+	printList(testMoveNodeListFirst);	
+	AlternatingSplit(testMoveNodeListFirst, &newFirstList, &newSecondList);
+	printList(newFirstList);
+	printList(newSecondList);
+
+	/*
+	printf("Testing ShuffleMerge Operation: \n");
+	printList(newFirstList);	
+	printList(newSecondList);	
+	printList(ShuffleMerge(newFirstList, newSecondList));
+	*/
+
+	printf("Testing SortedMerge Operation: \n");
+	printList(newFirstList);	
+	printList(newSecondList);	
+	node* newll = SortedMerge(newFirstList, newSecondList);
+	printList(newll);
+	
+	printf("Testing Reverse Operation: \n");
+	printList(newll);
+	Reverse(&newll);
+	printList(newll);
+
+	
+	printf("Testing ReverseRecursive Operation: \n");
+	printList(newll);
+	ReverseRecursive(&newll);
+	printList(newll);
+
+	
+	printf("Testing SortedIntersect Operation: \n");
+	node* a = BuildList(3), *b = BuildList(6);
+	printList(a);
+	printList(b);
+	printList(SortedIntersect(a, b));
+
+	printf("Testing MergeSort Operation: \n");
+    a = BuildListReverse(3);
+	printList(a);
+	MergeSort(&a);
+	printList(a);
 }
 
 
