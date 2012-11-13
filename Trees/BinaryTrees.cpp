@@ -372,6 +372,75 @@ bool isBST(node* tree)
 	return left & right;
 }
 
+
+node* treeListProblem(node* nodePtr)
+{
+	if(nodePtr == NULL)
+		return NULL;
+	else
+		if(nodePtr->left == NULL && nodePtr->right == NULL)
+		{
+			nodePtr->left = nodePtr;
+			nodePtr->right = nodePtr;
+			return nodePtr;
+		}
+	else
+		if(nodePtr->left != NULL && nodePtr->right == NULL)
+		{
+			node* listTail = treeListProblem(nodePtr->left);
+			node* listHead = listTail->right;
+
+			nodePtr->right = listHead;
+			nodePtr->left = listTail;
+			
+			listTail->right = nodePtr;
+			listHead->left = nodePtr;
+
+			return nodePtr;
+		}
+	else
+		if(nodePtr->left == NULL && nodePtr->right != NULL)
+		{
+			node* listTail = treeListProblem(nodePtr->right);
+			node* listHead = listTail->right;
+
+			nodePtr->right = listHead;
+			nodePtr->left = listTail;
+			
+			listTail->right = nodePtr;
+			listHead->left = nodePtr;
+
+			return listTail;
+		}
+	else
+		{
+			node* leftSubTree = treeListProblem(nodePtr->left);
+			node* rightSubTree = treeListProblem(nodePtr->right);
+
+			// left-sub-tree
+			node* leftTail = leftSubTree;
+			node* leftHead = leftTail->right;
+
+			// right-sub-tree
+			node* rightTail = rightSubTree;
+			node* rightHead = rightTail->right;
+			
+			leftTail->right = nodePtr;
+			leftHead->left = rightTail;
+
+			rightTail->right = leftHead;
+			rightHead->left = nodePtr;
+
+			nodePtr->right = rightHead;
+			nodePtr->left = leftTail;
+
+			return rightTail;
+		}
+
+	return NULL;
+}
+
+
 int main() {
 
 	node* tree = BuildRandomTree(5);
@@ -399,7 +468,22 @@ int main() {
 
 	for(int i = 1; i <= 10; i++)
 		if(countTreesSolution(i) != countTrees(i))
-			cout<<i<<" "<<countTrees(i)<<" "<<countTreesSolution(i)<<endl;;
+			cout<<i<<" "<<countTrees(i)<<" "<<countTreesSolution(i)<<endl;
+
+	tree = BuildRandomTree(5);
+	printInOrder(tree);
+	cout<<"Testing inOrder "<<endl;
+	
+	cout<<"Testing Tree-List Recurssion "<<endl;
+	node* endList = treeListProblem(tree)->right;
+	node* nextPTr = endList;
+	do{
+		cout<<nextPTr->data<<" ";
+		nextPTr=nextPTr->right;
+	}while(nextPTr != endList);
+
+	cout<<endl<<"Finish";
+
 }
 
 
