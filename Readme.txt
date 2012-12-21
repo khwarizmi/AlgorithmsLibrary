@@ -8,6 +8,9 @@ DataStructures:
 	*1D Range Trees.
 	*kd-Tree in 2D with simple Visualization Demo.
 
+Graph Algorithms:
+	*Minimum Spanning Tree(Prim Algorithm).
+
 Linear System Solvers:
 	*Gauss-Jordan Elimination Method.
 	*LUP System Solver.
