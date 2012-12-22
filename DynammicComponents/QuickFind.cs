@@ -8,8 +8,10 @@ namespace AlgorithmsLibrary.DynammicComponents
     class QuickFind
     {
         int[] id;
+        int count;
         public QuickFind(int N)
         {
+            count = N;
             id = new int[N];
             for (int i = 0; i < N; i++)
                 id[i] = i;
@@ -30,6 +32,9 @@ namespace AlgorithmsLibrary.DynammicComponents
 
             for (int i = 0; i < id.Length; i++)
                 if (id[i] == p) id[i] = q;
+            count--;
         }
+
+        public int Count() { return count; } 
     }
 }

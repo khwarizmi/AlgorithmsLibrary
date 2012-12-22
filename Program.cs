@@ -31,6 +31,7 @@ namespace AlgorithmsLibrary
             qu.Union(4, 9);
             qu.Union(8, 0);
 
+            Console.WriteLine(qu.Count());
         }
     }
 }

@@ -9,8 +9,10 @@ namespace AlgorithmsLibrary.DynammicComponents
     {
         int[] id;
         int[] size;
+        int count;
         public QuickUnion(int N)
         {
+            count = N;
             id = new int[N];
             size = new int[N];
             for (int i = 0; i < N; i++)
@@ -31,6 +33,8 @@ namespace AlgorithmsLibrary.DynammicComponents
             return p;
         }
 
+        public int Count() { return count; }
+
         public bool Find(int p, int q)
         {
             return root(p) == root(q);
@@ -40,6 +44,8 @@ namespace AlgorithmsLibrary.DynammicComponents
         {
             int pRoot = root(p);
             int qRoot = root(q);
+            
+            if (pRoot == qRoot) return;
             if (size[pRoot] < size[qRoot])
             {
                 id[pRoot] = qRoot;
@@ -50,6 +56,8 @@ namespace AlgorithmsLibrary.DynammicComponents
                 id[qRoot] = pRoot;
                 size[pRoot] += size[qRoot];
             }
+            // decrease connected components
+            count--;
         }
     }
 }
