@@ -45,6 +45,7 @@
   <ItemGroup>
     <Compile Include="DynammicComponents\QuickFind.cs" />
     <Compile Include="DynammicComponents\QuickUnion.cs" />
+    <Compile Include="Kruskal.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

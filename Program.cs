@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.IO;
 using AlgorithmsLibrary.DynammicComponents;
 
 namespace AlgorithmsLibrary
@@ -32,6 +33,28 @@ namespace AlgorithmsLibrary
             qu.Union(8, 0);
 
             Console.WriteLine(qu.Count());
+
+            //C:\Users\Feras\Desktop\edges.txt
+            StreamReader sr= new StreamReader (@"C:\Users\Feras\Desktop\edges.txt");
+            string x= sr.ReadLine();
+            string[] nv = x.Split(' ');
+            int vertices= int.Parse(nv[0]);
+            int edges = int.Parse(nv[1]);
+            List<Edge> EdgeList= new List<Edge> ();
+            List<int> EdgeCost = new List<int>();
+            while (edges > 0)
+            {
+                Edge ed;
+                x = sr.ReadLine();
+                nv = x.Split(' ');
+                ed.a = int.Parse(nv[0]);
+                ed.b = int.Parse(nv[1]);
+                EdgeList.Add(ed);
+                EdgeCost.Add(int.Parse(nv[2]));
+                edges--;
+            }
+
+            Console.WriteLine(Kruskal.SolveMSt(EdgeList.ToArray(), EdgeCost.ToArray(), vertices));
         }
     }
 }
