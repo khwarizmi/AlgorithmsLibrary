@@ -32,29 +32,55 @@ namespace AlgorithmsLibrary
             qu.Union(4, 9);
             qu.Union(8, 0);
 
-            Console.WriteLine(qu.Count());
+            //Console.WriteLine(qu.Count());
 
             //C:\Users\Feras\Desktop\edges.txt
-            StreamReader sr= new StreamReader (@"C:\Users\Feras\Desktop\edges.txt");
+            StreamReader sr = new StreamReader(@"C:\Users\Feras\Desktop\clustering1.txt");
             string x= sr.ReadLine();
             string[] nv = x.Split(' ');
             int vertices= int.Parse(nv[0]);
-            int edges = int.Parse(nv[1]);
             List<Edge> EdgeList= new List<Edge> ();
             List<int> EdgeCost = new List<int>();
-            while (edges > 0)
+            while (!sr.EndOfStream)
             {
                 Edge ed;
                 x = sr.ReadLine();
                 nv = x.Split(' ');
-                ed.a = int.Parse(nv[0]);
-                ed.b = int.Parse(nv[1]);
+                ed.a = int.Parse(nv[0]) - 1;
+                ed.b = int.Parse(nv[1]) - 1;
                 EdgeList.Add(ed);
                 EdgeCost.Add(int.Parse(nv[2]));
-                edges--;
             }
 
-            Console.WriteLine(Kruskal.SolveMSt(EdgeList.ToArray(), EdgeCost.ToArray(), vertices));
+            Console.WriteLine(SolveCluster(EdgeList.ToArray(), EdgeCost.ToArray(), vertices));
+        }
+
+        //106
+        static public int SolveCluster(Edge[] EdgeList, int[] EdgeCost, int nodes)
+        {
+            int mstCost = 0;
+            QuickUnion Qu = new QuickUnion(nodes);
+            Array.Sort(EdgeCost, EdgeList);
+            int i = 0;
+            for (; i < EdgeCost.Length && Qu.Count() > 4; i++)
+            {
+                if (!Qu.Find(EdgeList[i].a, EdgeList[i].b))
+                {
+                    mstCost += EdgeCost[i];
+                    Qu.Union(EdgeList[i].a, EdgeList[i].b);
+                }
+            }
+
+            for (; i < EdgeCost.Length; i++)
+            {
+                if (!Qu.Find(EdgeList[i].a, EdgeList[i].b))
+                {
+                    Console.WriteLine(EdgeCost[i]);
+                    break;
+                }
+            }
+
+            return mstCost;
         }
     }
 }
