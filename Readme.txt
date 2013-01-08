@@ -1,4 +1,4 @@
-Welcome to My Library : i'm implementing alot of algorithms in Graph Theory, Numerical Methods,Datastructures, Linear System Solvers. 
+Welcome to My Library : i'm implementing Data structures and algorithms in Graph Theory, Numerical Methods,Datastructures, Linear System Solvers. 
 
 DataStructures:
 	*Bit Vector(set bit index value, get bit value). 
@@ -9,7 +9,9 @@ DataStructures:
 	*kd-Tree in 2D with simple Visualization Demo.
 
 Graph Algorithms:
-	*Minimum Spanning Tree(Prim Algorithm, Kruskal Algorithm).
+	*Minimum Spanning Tree(Prim, Kruskal Algorithms).
+	*Single Source Shortest Path.(Bellman Ford)
+	*All-Pairs Shortest Path. (Floyd-Warshall)
 
 Linear System Solvers:
 	*Gauss-Jordan Elimination Method.

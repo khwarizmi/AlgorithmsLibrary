@@ -45,7 +45,10 @@
   <ItemGroup>
     <Compile Include="DynammicComponents\QuickFind.cs" />
     <Compile Include="DynammicComponents\QuickUnion.cs" />
-    <Compile Include="Kruskal.cs" />
+    <Compile Include="GraphAlgorithms\BellmanFord.cs" />
+    <Compile Include="GraphAlgorithms\FloydWarshall.cs" />
+    <Compile Include="GraphAlgorithms\Kruskal.cs" />
+    <Compile Include="GraphAlgorithms\PriorityQueue.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

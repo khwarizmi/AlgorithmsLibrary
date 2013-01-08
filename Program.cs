@@ -9,6 +9,82 @@ namespace AlgorithmsLibrary
 {
     class Program
     {
+        static HashSet<string> possibles = new HashSet<string>();
+        static HashSet<string> hset = new HashSet<string>();
+        static Dictionary<string, int> dict = new Dictionary<string, int>();
+           
+        static void permute(StringBuilder s, int changes)
+        {
+            string ky = s.ToString();
+            if (changes == 2)
+                possibles.Add(ky);
+            else
+            {
+                possibles.Add(ky);
+                for (int i = 0; i < s.Length; i++)
+                {
+                    char old = s[i];
+                    if (s[i] == '0')
+                    {
+                        s[i] = '1';
+                        permute(s, changes + 1);
+                    }
+                    else
+                    {
+                        s[i] = '0';
+                        permute(s, changes + 1);
+                    }
+                    s[i] = old;
+                }
+            }
+        }
+
+        static void run(string file)
+        {
+            //clear hset
+            hset.Clear();
+            dict.Clear();
+            possibles.Clear();
+
+            List<string> lines = new List<string>();
+            StreamReader sr = new StreamReader(file);
+            string x = sr.ReadLine();
+            int k = 0;
+            while (!sr.EndOfStream)
+            {
+                string raw = sr.ReadLine();
+                if (raw == "")
+                    continue;
+
+                string str = raw.Replace(" ", "");
+                if (!dict.ContainsKey(str))
+                {
+                    dict.Add(str, k);
+                    lines.Add(str);
+                    k++;
+                }
+                hset.Add(str);
+            }
+
+            int nodes = dict.Keys.Count;
+            QuickUnion Qu = new QuickUnion(nodes);
+            for (int i=0; i < nodes; i++)
+            {
+                possibles.Clear();
+                permute(new StringBuilder(lines[i]), 0);
+                foreach (string s in possibles)
+                {
+                    if (hset.Contains(s) && s != lines[i])
+                    {
+                        if (!Qu.Find(dict[s], dict[lines[i]]))
+                            Qu.Union(dict[s], dict[lines[i]]);
+                    }
+                }
+            }
+
+            Console.WriteLine(Qu.Count());
+        }
+
         static void Main(string[] args)
         {
             //0-9 9-2 0-8 0-7 0-1 6-0 
@@ -32,55 +108,7 @@ namespace AlgorithmsLibrary
             qu.Union(4, 9);
             qu.Union(8, 0);
 
-            //Console.WriteLine(qu.Count());
-
-            //C:\Users\Feras\Desktop\edges.txt
-            StreamReader sr = new StreamReader(@"C:\Users\Feras\Desktop\clustering1.txt");
-            string x= sr.ReadLine();
-            string[] nv = x.Split(' ');
-            int vertices= int.Parse(nv[0]);
-            List<Edge> EdgeList= new List<Edge> ();
-            List<int> EdgeCost = new List<int>();
-            while (!sr.EndOfStream)
-            {
-                Edge ed;
-                x = sr.ReadLine();
-                nv = x.Split(' ');
-                ed.a = int.Parse(nv[0]) - 1;
-                ed.b = int.Parse(nv[1]) - 1;
-                EdgeList.Add(ed);
-                EdgeCost.Add(int.Parse(nv[2]));
-            }
-
-            Console.WriteLine(SolveCluster(EdgeList.ToArray(), EdgeCost.ToArray(), vertices));
         }
 
-        //106
-        static public int SolveCluster(Edge[] EdgeList, int[] EdgeCost, int nodes)
-        {
-            int mstCost = 0;
-            QuickUnion Qu = new QuickUnion(nodes);
-            Array.Sort(EdgeCost, EdgeList);
-            int i = 0;
-            for (; i < EdgeCost.Length && Qu.Count() > 4; i++)
-            {
-                if (!Qu.Find(EdgeList[i].a, EdgeList[i].b))
-                {
-                    mstCost += EdgeCost[i];
-                    Qu.Union(EdgeList[i].a, EdgeList[i].b);
-                }
-            }
-
-            for (; i < EdgeCost.Length; i++)
-            {
-                if (!Qu.Find(EdgeList[i].a, EdgeList[i].b))
-                {
-                    Console.WriteLine(EdgeCost[i]);
-                    break;
-                }
-            }
-
-            return mstCost;
-        }
     }
 }
