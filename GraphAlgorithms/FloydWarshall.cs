@@ -8,7 +8,7 @@ namespace AlgorithmsLibrary
 {
     class FloydWarshall
     {
-        const int INF = 2000000000;
+        public const int INF = 2000000000;
         int nodes;
         int[,] Table;
         bool negativeCycle;
@@ -49,7 +49,8 @@ namespace AlgorithmsLibrary
             for (int k = 0; k < nodes; k++)
                 for (int i = 0; i < nodes; i++)
                     for (int j = 0; j < nodes; j++)
-                        Table[i, j] = Math.Min(Table[i, j], Table[i, k] + Table[k, j]);
+                        if(Table[i,k] != INF && Table[k,j] != INF)
+                            Table[i, j] = Math.Min(Table[i, j], Table[i, k] + Table[k, j]);
 
             //Detect Negative Cost-Cycle
             for (int i = 0; i < nodes; i++)
