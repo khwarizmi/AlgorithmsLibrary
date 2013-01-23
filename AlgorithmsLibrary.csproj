@@ -49,6 +49,7 @@
     <Compile Include="GraphAlgorithms\FloydWarshall.cs" />
     <Compile Include="GraphAlgorithms\Kruskal.cs" />
     <Compile Include="GraphAlgorithms\PriorityQueue.cs" />
+    <Compile Include="GraphAlgorithms\TSP.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

@@ -3,19 +3,18 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.IO;
-using AlgorithmsLibrary.DynammicComponents;
 
-namespace AlgorithmsLibrary
+namespace AlgorithmsLibrary.GraphAlgorithms
 {
-    class Program
+    class TSP
     {
-        static void Main(string[] args)
+        static public void Run(string filePath)
         {
             const double INF = int.MaxValue;
             int n = 6;
-            string filePath = @"C:\Users\Feras\Desktop\tsp.txt";
-            StreamReader sr = new StreamReader (@filePath);
-            
+            //string filePath = @"C:\Users\Feras\Desktop\tsp.txt";
+            StreamReader sr = new StreamReader(@filePath);
+
             //
             n = int.Parse(sr.ReadLine());
             int MAX = 1 << n;
@@ -25,13 +24,13 @@ namespace AlgorithmsLibrary
             int oldIndex = 0;
             double[,] nodes = new double[n, 2];
             double[,] Graph = new double[n, n];
-            double[,,] state = new double[p, n, 2]; // [Set, LastVertex, vertexCount_Index] 
+            double[, ,] state = new double[p, n, 2]; // [Set, LastVertex, vertexCount_Index] 
             int[] indices = new int[1 << n];
-            int[] indexCount = new int [n + 1];
+            int[] indexCount = new int[n + 1];
             int[] setSize = new int[1 << n];
-            
+
             //Read input and Create Graph
-            for(int i = 0; i < n; i++)
+            for (int i = 0; i < n; i++)
             {
                 string[] xy = sr.ReadLine().Split(' ');
                 nodes[i, 0] = double.Parse(xy[0]);
@@ -46,10 +45,10 @@ namespace AlgorithmsLibrary
                     Graph[i, j] += (nodes[i, 1] - nodes[j, 1]) * (nodes[i, 1] - nodes[j, 1]);
                     Graph[i, j] = Math.Sqrt(Graph[i, j]);
                 }
-            
+
             //Create Index Mapping
             int sz = 0;
-            for (int i = 1; i < (1 << n); i+=2)
+            for (int i = 1; i < (1 << n); i += 2)
             {
                 sz = 0;
                 for (int j = 0; j < n; j++)
@@ -71,7 +70,7 @@ namespace AlgorithmsLibrary
             state[indices[1], 0, 1] = 0;
             for (int i = 1; i < n; i++)
                 state[indices[(1 | (1 << i))], i, 0] = Graph[0, i];
-        
+
             //Steps
             for (int m = 2; m < n; m++)
             {
@@ -105,9 +104,8 @@ namespace AlgorithmsLibrary
             double minLength = double.MaxValue;
             for (int i = 1; i < n; i++)
                 minLength = Math.Min(minLength, state[setIndex, i, n % 2] + Graph[i, 0]);
-        
+
             Console.WriteLine("Result: " + minLength);
         }
-
     }
 }
