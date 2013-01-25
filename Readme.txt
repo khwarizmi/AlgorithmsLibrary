@@ -12,6 +12,7 @@ Graph Algorithms:
 	*Minimum Spanning Tree(Prim, Kruskal Algorithms).
 	*Single Source Shortest Path.(Bellman Ford)
 	*All-Pairs Shortest Path. (Floyd-Warshall)
+	*Traveling SalesMan Problem. (using Dynamic Programming O((n^2) * (2^n)) and Polynomial Space)
 
 Linear System Solvers:
 	*Gauss-Jordan Elimination Method.
@@ -19,3 +20,4 @@ Linear System Solvers:
 
 Computational Geometry:
 	*Convex Hull Algorithms(brute force, Graham Scan, Jarvis March). [using Java]
+
