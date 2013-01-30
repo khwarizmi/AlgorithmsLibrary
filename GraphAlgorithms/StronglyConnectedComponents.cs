@@ -37,9 +37,10 @@ namespace AlgorithmsLibrary.GraphAlgorithms
             vertexNumber = 0;
 
             for (int i = 0; i < AdjList.Count; i++)
-                if (vertex_num[i] == 0)
+            {
+                if (visited[i] == WHITE)
                     tarjanScc(i);
-
+            }
             return SccComponenets.Count;
         }
 
@@ -77,7 +78,6 @@ namespace AlgorithmsLibrary.GraphAlgorithms
             {
                 SccComponenets.Add(new List<int>());
                 int index = SccComponenets.Count - 1;
-                Console.WriteLine("Current vertex Number: " + v);
                 while (true)
                 {
                     u = visitedNodes.Peek();
@@ -94,6 +94,18 @@ namespace AlgorithmsLibrary.GraphAlgorithms
         public bool SameComponent(int v1, int v2)
         {
             return (vertex_low != null) && v1 < vertex_low.Length && v2 < vertex_low.Length && (vertex_low[v1] == vertex_low[v2]);
+        }
+
+        public int MaxComponent()
+        {
+            if (SccComponenets == null)
+                return 0;
+
+            int max = 0;
+            foreach (List<int> group in SccComponenets)
+                max = Math.Max(max, group.Count);
+
+            return max;
         }
     }
 }
