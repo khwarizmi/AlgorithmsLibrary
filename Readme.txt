@@ -13,6 +13,7 @@ Graph Algorithms:
 	*Single Source Shortest Path.(Bellman Ford)
 	*All-Pairs Shortest Path. (Floyd-Warshall)
 	*Traveling SalesMan Problem. (using Dynamic Programming O((n^2) * (2^n)) and Polynomial Space)
+	*Strongly Connected Componenets. (using Tarjan's Algorithm)
 
 Linear System Solvers:
 	*Gauss-Jordan Elimination Method.
