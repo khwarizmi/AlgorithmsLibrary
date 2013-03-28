@@ -47,10 +47,13 @@
     <Compile Include="DynammicComponents\QuickUnion.cs" />
     <Compile Include="GraphAlgorithms\BellmanFord.cs" />
     <Compile Include="GraphAlgorithms\FloydWarshall.cs" />
+    <Compile Include="GraphAlgorithms\GraphHelper.cs" />
+    <Compile Include="GraphAlgorithms\Kosaraju.cs" />
     <Compile Include="GraphAlgorithms\Kruskal.cs" />
     <Compile Include="GraphAlgorithms\PriorityQueue.cs" />
-    <Compile Include="GraphAlgorithms\StronglyConnectedComponents.cs" />
+    <Compile Include="GraphAlgorithms\Tarjan.cs" />
     <Compile Include="GraphAlgorithms\TSP.cs" />
+    <Compile Include="IO\IOOperations.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SAT_Problem.cs" />

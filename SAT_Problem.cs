@@ -13,7 +13,7 @@ namespace AlgorithmsLibrary
         {
             for (int f = 1; f <= 6; f++)
             {
-                StronglyConnectedComponents scc = new StronglyConnectedComponents();
+                Tarjan scc = new Tarjan();
                 StreamReader sr = new StreamReader(@"C:\Users\Feras\Desktop\sat" + f + ".txt");
                 List<List<int>> adj = new List<List<int>>();
                 List<List<int>> adjTranspose = new List<List<int>>();
