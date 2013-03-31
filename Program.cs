@@ -44,7 +44,8 @@ namespace AlgorithmsLibrary
             /* reverse Graph */
             List<int>[] GT = GraphHelper.ReverseGraph(G);
             Kosaraju ks = new Kosaraju();
-            ks.Run(G, GT, G.Length);
+            //ks.Run(G, GT, G.Length);
+            ks.Kosaraju_BFSRun(G, GT, G.Length);
             ks.PrintComponents();
         }
     }

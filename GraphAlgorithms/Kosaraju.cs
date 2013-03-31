@@ -8,6 +8,7 @@ namespace AlgorithmsLibrary.GraphAlgorithms
     class Kosaraju
     {
         bool[] visited;
+        bool[] enqueue;
         int[] componentId;
         List<List<int>> SccComponenets;
         List<int>[] AdjList;
@@ -82,69 +83,85 @@ namespace AlgorithmsLibrary.GraphAlgorithms
             return SccComponenets.Count;
         }
 
-        /* BFS Code needs to be Changed to DFS to Solve Problem Correct
-        void KosarajuForward(int v)
+        /* BFS Code still needs adjustments */
+        public int Kosaraju_BFSRun(List<int>[] G, List<int>[] GT, int nodesCount)
         {
-        int u = 0;
-        Queue<int> nodeList = new Queue<int>();
-        Stack<int> postOrder = new Stack<int>();
-        nodeList.Enqueue(v);
-        visited[v] = BLACK;
-
-        while (nodeList.Count > 0)
-        {
-            v = nodeList.Dequeue();
-            postOrder.Push(v);
-            for (int i = 0; i < AdjList[v].Count; i++)
+            int from, to, count = 0;
+            visited = new bool[nodesCount];
+            enqueue = new bool[nodesCount];
+            componentId = new int[nodesCount];
+            int[] level = new int[nodesCount]; 
+            SccComponenets = new List<List<int>>();
+            Queue<int> nodeList = new Queue<int>();
+            Queue<int> nodeOrder = new Queue<int>();
+            
+            /* First Pass */
+            AdjList = GT;
+            for (int i = 0; i < AdjList.Length; ++i)
             {
-                u = AdjList[v][i];
-                if(visited[u] != BLACK)
+                if(visited[i]) continue;
+                level[i] = count++;
+                nodeOrder.Enqueue(i);
+                nodeList.Enqueue(i);
+                while (nodeList.Count > 0)
                 {
-                    nodeList.Enqueue(u);
-                    visited[u] = BLACK;
+                    from = nodeList.Dequeue();
+                    visited[from] = enqueue[from] = true;
+                    for (int j = 0; j < AdjList[from].Count; j++)
+                    {
+                        to = AdjList[from][j];
+                        if (!enqueue[to])
+                        {
+                            nodeList.Enqueue(to);
+                            nodeOrder.Enqueue(to);
+                            enqueue[to] = true;
+                            level[to] = level[i];
+                        }
+                    }
                 }
             }
-        }
 
-        while (postOrder.Count > 0)
-        {
-            u = postOrder.Pop();
-            vertex_num[u] = ++vertexNumber;
-            vertex_visited[vertexNumber - 1] = u;
-        }
-        }
+            /* Second Pass */
+            int componentCount = 0;
+            AdjList = G;
+            for (int i = 0; i < nodesCount; ++i)
+                visited[i] = enqueue[i] = false;
 
-        void KosarajuBackward(int v)
-        {
-        int u = 0;
-        int maxCost = vertex_num[v];
-        Queue<int> nodeList = new Queue<int>();
-        List<int> group = new List<int>();
-        nodeList.Enqueue(v);
-        visited[v] = GRAY;    
-
-        while (nodeList.Count > 0)
-        {
-            v = nodeList.Dequeue();
-            group.Add(v); // current group Componenets
-            for (int i = 0; i < AdjList[v].Count; i++)
+            while(nodeOrder.Count > 0)
             {
-                u = AdjList[v][i];
-                if (maxCost > vertex_num[u] && visited[u] != GRAY)
+                from = nodeOrder.Dequeue();
+                if (visited[from]) continue;
+                visited[from] = enqueue[from] = true;
+                Queue<int> reachableNodes = new Queue<int>();
+                reachableNodes.Enqueue(from);
+                while (reachableNodes.Count > 0)
                 {
-                    nodeList.Enqueue(u);
-                    visited[u] = GRAY;        
+                    int node = reachableNodes.Dequeue();
+                    componentId[node] = componentCount;
+                    visited[node] = true;
+                    for (int i = 0; i < AdjList[node].Count; ++i)
+                    {
+                        to = AdjList[node][i];
+                        if (!enqueue[to] && level[to] == level[from])
+                        {
+                            reachableNodes.Enqueue(to);
+                            enqueue[to] = true;
+                        }
+                    }
                 }
+
+                componentCount++;
             }
-        }
 
-        int groupNumbers = SccComponenets.Count + 1;
-        foreach (int vertex in group)
-            vertex_low[vertex] = groupNumbers;
+            //Create Scc
+            for (int i = 0; i < componentCount; ++i)
+                SccComponenets.Add(new List<int>());
+            for (int node = 0; node < nodesCount; ++node)
+                SccComponenets[componentId[node]].Add(node);
 
-        SccComponenets.Add(group);
+            return SccComponenets.Count;
+
         }
-        */
 
         public int MaxComponent()
         {
