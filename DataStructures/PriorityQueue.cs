@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Collections;
 
-namespace GraphAlgorithms
+namespace AlgorithmsLibrary.DataStructures
 {
     /// <summary>
     /// Min Priority Queue Implemented
@@ -22,9 +22,23 @@ namespace GraphAlgorithms
         List<TKey> TempVertexKey = new List<TKey>();
         List<TElement> TempVertexElement = new List<TElement>();
 
+        public PriorityQueue(TElement[] Elements, TKey[] Keys)
+        {
+            if (Elements.Length != Keys.Length) throw new Exception("Invalid Data Count");
+
+            for (int i = 0; i < Keys.Length; i++)
+            {
+                VertexKey.Add(Keys[i]);
+                VertexElement.Add(Elements[i]);
+            }
+
+            for (int i = VertexKey.Count / 2; i >= 0; i--)
+                MinHepify(i);
+        }
+
         public PriorityQueue(List<TElement> Elements,List<TKey> Keys)
         {
-            if(Elements.Count!=Keys.Count) throw new Exception("Invalid Graph Data");
+            if(Elements.Count!=Keys.Count) throw new Exception("Invalid Data Count");
 
             for (int i = 0; i < Keys.Count; i++)
             {
@@ -34,8 +48,7 @@ namespace GraphAlgorithms
             }
 
             for(int i=VertexKey.Count/2;i>=0;i--) 
-            MinHepify(i);
-
+                MinHepify(i);
         }
 
         public void Insert(TElement Element,TKey Cost)
@@ -51,7 +64,6 @@ namespace GraphAlgorithms
             }
 
         }
-
 
         public KeyValuePair<TElement,TKey> Minimum()
         {
@@ -93,6 +105,7 @@ namespace GraphAlgorithms
         {
             throw new Exception("Not Implemented.");
         }
+       
         public void Decrease_Key(TElement Element, TKey Cost)
         {
             bool _Found = false;
@@ -173,6 +186,7 @@ namespace GraphAlgorithms
         {
             get { return VertexElement; }
         }
+       
         public List<TKey> keys
         {
             get { return VertexKey; }
@@ -219,7 +233,5 @@ namespace GraphAlgorithms
             }
 
         }
-
     }
-
 }

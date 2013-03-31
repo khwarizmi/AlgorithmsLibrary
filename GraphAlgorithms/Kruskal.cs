@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using AlgorithmsLibrary.DynammicComponents;
 
-namespace AlgorithmsLibrary
+namespace AlgorithmsLibrary.GraphAlgorithms
 {
     public struct Edge
     {

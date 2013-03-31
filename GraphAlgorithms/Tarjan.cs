@@ -13,13 +13,13 @@ namespace AlgorithmsLibrary.GraphAlgorithms
         List<List<int>> AdjList;
         List<List<int>> SccComponenets;
         Stack<int> visitedNodes;
-        int[] vertex_num, vertex_low, visited, vertex_visited;
+        int[] vertex_num, vertex_low, visited;
         int vertexNumber;
 
         public Tarjan()
         {
             AdjList = null;
-            visited = vertex_num = vertex_low = vertex_visited = null;
+            visited = vertex_num = vertex_low = null;
             visitedNodes = null;
             SccComponenets = new List<List<int>>();
             visitedNodes = new Stack<int>();
