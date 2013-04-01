@@ -12,9 +12,15 @@ namespace AlgorithmsLibrary.DataStructures
         List<int> PQIndex = new List<int>();
         List<int> ElementIndex = new List<int>();
 
+        public IndexedPriorityQueue()
+        {
+
+        }
+
         public IndexedPriorityQueue(TElement[] Elements, TKey[] Keys)
         {
-            if (Elements.Length != Keys.Length) throw new Exception("Invalid Data Count");
+            if (Elements.Length != Keys.Length) 
+                throw new Exception("Invalid Data Count");
 
             for (int i = 0; i < Keys.Length; i++)
             {
@@ -44,38 +50,60 @@ namespace AlgorithmsLibrary.DataStructures
                 MinHepify(i);
         }
 
-        public KeyValuePair<TElement,TKey> Minimum()
+        public KeyValuePair<TKey, TElement> Minimum()
         {
             if (VertexKey.Count < 1) 
                 throw new Exception("Priority Queue is Empty !.");
 
-            return (new KeyValuePair<TElement, TKey>(VertexElement[0], VertexKey[0]));
+            return (new KeyValuePair<TKey, TElement>(VertexKey[0], VertexElement[0]));
         }
 
-        public KeyValuePair<TElement,TKey> Extract_Minimum()
+        public KeyValuePair<TKey, TElement> Extract_Minimum()
         {
             if (VertexKey.Count < 1) 
                 throw new Exception("Priority Queue is Empty !.");
 
-            KeyValuePair<TElement, TKey> KvPair = new KeyValuePair<TElement, TKey>(VertexElement[0], VertexKey[0]);
+            KeyValuePair<TKey, TElement> KvPair = new KeyValuePair<TKey, TElement>(VertexKey[0], VertexElement[0]);
 
             int _Last = VertexElement.Count - 1;
             VertexElement[0] = VertexElement[_Last];
             VertexKey[0] = VertexKey[_Last];
-            ElementIndex[ PQIndex[0] ] = -1;
+
+            //Manage pQIndex and Element Index
+            ElementIndex[PQIndex[0]] = -1; //Set Element Removed
+            int temp = PQIndex[0]; //Swap pQIndices with removed Item
+            PQIndex[0] = PQIndex[_Last];
+            PQIndex[_Last] = temp;
 
             VertexElement.RemoveAt(_Last);
             VertexKey.RemoveAt(_Last);
+
 
             MinHepify(0);
 
             return KvPair;
         }
-       
+
+        public void Insert(TElement Element, TKey Cost)
+        {
+            VertexElement.Add(Element);
+            VertexKey.Add(Cost);
+            ElementIndex.Add(VertexKey.Count - 1);
+            PQIndex.Add(VertexKey.Count - 1);
+            int _index = VertexKey.Count - 1;
+            
+            while (_index != 0 && Compare(VertexKey[Parent(_index)], VertexKey[_index]) > 0)
+            {
+                Swap(Parent(_index), _index);
+                _index = Parent(_index);
+            }
+        }
+
         public void Decrease_Key(int Index, TKey Cost)
         {
             if (Index < 0 || Index > ElementIndex.Count)
                 throw new Exception("Invalid index Range.");
+
             if (ElementIndex[Index] == -1) 
                 throw new Exception("Element Removed.");
             
@@ -156,6 +184,16 @@ namespace AlgorithmsLibrary.DataStructures
             {
                 int X = (int)x;
                 int Y = (int)y;
+
+                if (X == Y) return 0;
+                if (X > Y) return 2;
+                else
+                    return -2;
+            }
+            else if (x is double)
+            {
+                double X = (double)x;
+                double Y = (double)y;
 
                 if (X == Y) return 0;
                 if (X > Y) return 2;

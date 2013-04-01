@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.IO;
+using AlgorithmsLibrary.DataStructures;
 
 namespace AlgorithmsLibrary.IO
 {
@@ -33,6 +34,25 @@ namespace AlgorithmsLibrary.IO
             }
 
             return G;
+        }
+
+        static public AdjacencyList ReadAdjacencyGraph(string inputFile)
+        {
+            StreamReader sr = new StreamReader(inputFile);
+            int vertex_count = int.Parse(sr.ReadLine());
+            int edge_count = int.Parse(sr.ReadLine());
+            AdjacencyList adjList = new AdjacencyList(vertex_count);
+
+            for (int i = 0; i < edge_count; ++i)
+            {
+                string[] line = sr.ReadLine().Split(' ');
+                int from = int.Parse(line[0]);
+                int to = int.Parse(line[1]);
+                double cost = double.Parse(line[2]);
+                adjList.addEdge(from, to, cost);
+            }
+
+            return adjList;
         }
     }
 }

@@ -53,9 +53,9 @@ namespace AlgorithmsLibrary.DataStructures
 
         public void Insert(TElement Element,TKey Cost)
         {
-            int _index = VertexKey.Count - 1;
             VertexElement.Add(Element);
             VertexKey.Add(Cost);
+            int _index = VertexKey.Count - 1;
             
             while (_index != 0 && Compare(VertexKey[Parent(_index)], VertexKey[_index]) > 0)
             {

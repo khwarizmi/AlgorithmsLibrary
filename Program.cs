@@ -17,31 +17,6 @@ namespace AlgorithmsLibrary
             Console.WriteLine("Hello World!");
            
             //string str = @"tiny.txt";
-            ///*
-            // * 13 22
-            //    0 2
-            //    0 6
-            //    1 0
-            //    2 3
-            //    2 4
-            //    3 2
-            //    3 4
-            //    4 5
-            //    4 6
-            //    4 11
-            //    5 0
-            //    5 3
-            //    6 8
-            //    6 7
-            //    8 6
-            //    9 6
-            //    9 7
-            //    9 12
-            //    10 9
-            //    11 9
-            //    12 10
-            //    12 11
-            // * */
             //List<int>[] G = IOOperations.ReadGraph(str);
             ///* reverse Graph */
             //List<int>[] GT = GraphHelper.ReverseGraph(G);
@@ -61,6 +36,13 @@ namespace AlgorithmsLibrary
             //    Console.WriteLine(pQ.Minimum());
             //    pQ.Extract_Minimum();
             //}
+
+            string str = @"spath.txt";
+            AdjacencyList adjList = IOOperations.ReadAdjacencyGraph(str);
+            Dijkstra ds = new Dijkstra(adjList, 0);
+            ds.Run();
+            for (int i = 1; i < 8; ++i)
+                Console.WriteLine(ds.DistanceTo(i));
         }
     }
 }

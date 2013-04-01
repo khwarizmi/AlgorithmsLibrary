@@ -43,10 +43,13 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Assert.cs" />
     <Compile Include="DataStructures\IndexedPriorityQueue.cs" />
     <Compile Include="DynammicComponents\QuickFind.cs" />
     <Compile Include="DynammicComponents\QuickUnion.cs" />
+    <Compile Include="DataStructures\AdjacencyList.cs" />
     <Compile Include="GraphAlgorithms\BellmanFord.cs" />
+    <Compile Include="GraphAlgorithms\Dijkstra.cs" />
     <Compile Include="GraphAlgorithms\FloydWarshall.cs" />
     <Compile Include="GraphAlgorithms\GraphHelper.cs" />
     <Compile Include="GraphAlgorithms\Kosaraju.cs" />
