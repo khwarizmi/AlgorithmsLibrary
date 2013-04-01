@@ -2,32 +2,24 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Collections;
 
 namespace AlgorithmsLibrary.DataStructures
 {
-    /// <summary>
-    /// Min Priority Queue Implemented
-    /// Decrease Function Takes O(V) Due to the search for Required VertexName
-    /// Extract  Function Takes O(Lg V)
-    /// </summary>
-    /// <typeparam name="TElement">Any kind of Objects</typeparam>
-    /// <typeparam name="TKey">Real Numbers</typeparam>
-    class PriorityQueue<TElement,TKey>
+    class IndexedPriorityQueue<TKey, TElement>
     {
-        //Store Vertices in Queue
         List<TKey> VertexKey=new List<TKey> ();
         List<TElement> VertexElement = new List<TElement>();
-        //Store Vertices After Removed From Queue
-        List<TKey> TempVertexKey = new List<TKey>();
-        List<TElement> TempVertexElement = new List<TElement>();
+        List<int> PQIndex = new List<int>();
+        List<int> ElementIndex = new List<int>();
 
-        public PriorityQueue(TElement[] Elements, TKey[] Keys)
+        public IndexedPriorityQueue(TElement[] Elements, TKey[] Keys)
         {
             if (Elements.Length != Keys.Length) throw new Exception("Invalid Data Count");
 
             for (int i = 0; i < Keys.Length; i++)
             {
+                PQIndex.Add(i);
+                ElementIndex.Add(i);
                 VertexKey.Add(Keys[i]);
                 VertexElement.Add(Elements[i]);
             }
@@ -36,13 +28,14 @@ namespace AlgorithmsLibrary.DataStructures
                 MinHepify(i);
         }
 
-        public PriorityQueue(List<TElement> Elements,List<TKey> Keys)
+        public IndexedPriorityQueue(List<TElement> Elements, List<TKey> Keys)
         {
             if(Elements.Count!=Keys.Count) throw new Exception("Invalid Data Count");
 
             for (int i = 0; i < Keys.Count; i++)
             {
-                //Vertices.Add(Elements[i],i);
+                PQIndex.Add(i);
+                ElementIndex.Add(i);
                 VertexKey.Add(Keys[i]);
                 VertexElement.Add(Elements[i]);
             }
@@ -51,40 +44,25 @@ namespace AlgorithmsLibrary.DataStructures
                 MinHepify(i);
         }
 
-        public void Insert(TElement Element,TKey Cost)
-        {
-            int _index = VertexKey.Count - 1;
-            VertexElement.Add(Element);
-            VertexKey.Add(Cost);
-            
-            while (_index != 0 && Compare(VertexKey[Parent(_index)], VertexKey[_index]) > 0)
-            {
-                Swap(Parent(_index), _index);
-                _index = Parent(_index);
-            }
-        }
-
         public KeyValuePair<TElement,TKey> Minimum()
         {
-            if (VertexKey.Count < 1) throw new Exception("Queue is Empty !.");
+            if (VertexKey.Count < 1) 
+                throw new Exception("Priority Queue is Empty !.");
 
-            KeyValuePair<TElement, TKey> KvPair = new KeyValuePair<TElement, TKey>(VertexElement[0], VertexKey[0]);
-
-            return KvPair;
+            return (new KeyValuePair<TElement, TKey>(VertexElement[0], VertexKey[0]));
         }
 
         public KeyValuePair<TElement,TKey> Extract_Minimum()
         {
-            if (VertexKey.Count < 1) throw new Exception("Queue is Empty !.");
+            if (VertexKey.Count < 1) 
+                throw new Exception("Priority Queue is Empty !.");
 
             KeyValuePair<TElement, TKey> KvPair = new KeyValuePair<TElement, TKey>(VertexElement[0], VertexKey[0]);
 
-            TempVertexKey.Add(VertexKey[0]);
-            TempVertexElement.Add(VertexElement[0]);
-
-            int _Last=VertexElement.Count - 1;
+            int _Last = VertexElement.Count - 1;
             VertexElement[0] = VertexElement[_Last];
             VertexKey[0] = VertexKey[_Last];
+            ElementIndex[ PQIndex[0] ] = -1;
 
             VertexElement.RemoveAt(_Last);
             VertexKey.RemoveAt(_Last);
@@ -93,26 +71,17 @@ namespace AlgorithmsLibrary.DataStructures
 
             return KvPair;
         }
- 
-        public void Decrease_Key(TElement Element, TKey Cost)
+       
+        public void Decrease_Key(int Index, TKey Cost)
         {
-            bool _Found = false;
-            int _Index = -1;
-
-            for (int i = 0; i < VertexElement.Count; i++)
-            {
-                if (Compare(Element,VertexElement[i])==0)
-                {
-                    VertexKey[i] = Cost;
-                    _Index = i;
-                    _Found = true;
-                    break;
-                }
-            }
-
-            if (!_Found) throw new Exception("No Element With given Name.");
-
-            while (_Index != 0 && Compare(VertexKey[Parent(_Index)],VertexKey[_Index])>0)
+            if (Index < 0 || Index > ElementIndex.Count)
+                throw new Exception("Invalid index Range.");
+            if (ElementIndex[Index] == -1) 
+                throw new Exception("Element Removed.");
+            
+            int _Index = ElementIndex[Index];
+            VertexKey[_Index] = Cost;
+            while (_Index != 0 && Compare(VertexKey[Parent(_Index)],VertexKey[_Index]) > 0)
             {
                 Swap(Parent(_Index), _Index);
                 _Index = Parent(_Index);
@@ -163,6 +132,12 @@ namespace AlgorithmsLibrary.DataStructures
             VertexElement[i] = VertexElement[j];
             VertexElement[j] = TempElement;
 
+            int t1 = PQIndex[i];
+            PQIndex[i] = PQIndex[j];
+            PQIndex[j] = t1;
+
+            ElementIndex[ PQIndex[i] ] = i;
+            ElementIndex[ PQIndex[j] ] = j;
         }
 
         public List<TElement> Vertices
@@ -207,11 +182,6 @@ namespace AlgorithmsLibrary.DataStructures
                     if (Compare(VertexElement[i], element) == 0)
                         return VertexKey[i];
                 
-                //search Vertices removed from queue
-                for (int i = 0; i < TempVertexElement.Count; i++)
-                    if (Compare(TempVertexElement[i], element) == 0)
-                        return TempVertexKey[i];
-
                 throw new Exception("Error");
             }
 

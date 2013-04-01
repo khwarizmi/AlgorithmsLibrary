@@ -4,7 +4,7 @@ Welcome to My Library : i'm implementing Data structures and algorithms in Graph
 DataStructures:
 	*Bit Vector(set bit index value, get bit value). 
 	*Dynammic Connected Components(Quick Find, Quick Union).
-	*Priority Queue, Circular Queue.
+	*Priority Queue, Indexed Priority Queue, Circular Queue.
 	*Red-Black-Tree (Rotate Left, Rotate Right, Insert, Delete). 
 	*1D Range Trees.
 	*kd-Tree in 2D with simple Visualization Demo.
